@@ -545,19 +545,24 @@ class FalsecolorLegend(FalsecolorBase):
     def createColorScale(self):
         """create color gradient image with pcomb and return path"""
         if self.is_vertical():
-            args = "-e v=y/yres;vleft=v;vright=v;vbelow=(y-1)/yres;vabove=(y+1)/yres;"
+            
             colheight = self.height
             colwidth = max(int(self.width*0.3), 25)
             self._legendOffX = colwidth + 3                         ## x-offset for legend
             if self.zerooff == 0:
                 self._gradientOffY = int(self._textheight / 2.0)    ## y-offset for gradient
+            args = "-e v=y/%s;vleft=v;vright=v;vbelow=(y-1)/%s;vabove=(y+1)/%s;" % (colheight,colheight,colheight)
         else:
-            args = "-e v=x/xres;vleft=(x-1)/xres;vright=(x+1)/xres;vbelow=v;vabove=v;"
+            
             colwidth = self.width
             colheight = max(int(self.height*0.5), 25)
             self._gradientOffY = self.height - colheight
+            args = "-e v=x/%s;vleft=(x-1)/%s;vright=(x+1)/%S;vbelow=v;vabove=v;" % (colwidth,colwidth,colwidth)
 
         cmd = "pcomb %s %s -x %d -y %d" % (self.pc0args, args, colwidth, colheight) 
+        
+        print(cmd)
+        
         path = self._createTempFileFromCmd(cmd)
         self._log.debug("gradient file='%s'" % path)
         return path  
